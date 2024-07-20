@@ -14,3 +14,7 @@ def pokemon(request, pokemon_id):
         'pokemon': pokemon
     }
     return HttpResponse(template.render(context, request))
+
+def add_pokemon(request):
+    if request.method == 'POST':
+        form =   
