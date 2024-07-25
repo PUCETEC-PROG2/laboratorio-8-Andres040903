@@ -1,6 +1,10 @@
 from django.http import HttpResponse
 from django.template import loader
 from .models import Pokemon
+from pokedex.forms import PokemonForm
+from django.shortcust import redirect, render
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.decorators import login_required
 
 def index(request):
     pokemons = Pokemon.objects.order_by('type')
@@ -15,6 +19,16 @@ def pokemon(request, pokemon_id):
     }
     return HttpResponse(template.render(context, request))
 
+@login_required 
 def add_pokemon(request):
     if request.method == 'POST':
-        form =   
+        form =  PokemonForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('pokedex:index')
+        else:
+            form = PokemonForm()
+            return render(request, 'add_pokemon.html', {'form':form})
+              
+class CustomLoginView(LoginView):
+    template_name = "login.html"
